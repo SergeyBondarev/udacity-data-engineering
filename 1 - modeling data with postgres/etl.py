@@ -3,6 +3,7 @@ import glob
 import psycopg2
 import pandas as pd
 from sql_queries import *
+from argparse import ArgumentParser
 
 
 def process_song_file(cur, filepath):
@@ -60,7 +61,7 @@ def process_log_file(cur, filepath):
         cur.execute(songplay_table_insert, songplay_data)
 
 
-def process_data(cur, conn, filepath, func):
+def process_data(cur, conn, filepath, func, bulk_insert):
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -72,6 +73,10 @@ def process_data(cur, conn, filepath, func):
     num_files = len(all_files)
     print('{} files found in {}'.format(num_files, filepath))
 
+    if bulk_insert:
+        # TODO: bulk insert
+        pass
+
     # iterate over files and process
     for i, datafile in enumerate(all_files, 1):
         func(cur, datafile)
@@ -79,15 +84,32 @@ def process_data(cur, conn, filepath, func):
         print('{}/{} files processed.'.format(i, num_files))
 
 
-def main():
+def setup_parser():
+    parser = ArgumentParser(description='Process data from ')
+    parser.add_argument(
+        '-bulk'
+        '--bulk-insert',
+        dest='bulk_insert',
+        default=False,
+        type=bool,
+        help='Whether or not use bulk insert',
+    )
+    return parser
+
+
+def main(bulk_insert):
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
-    process_data(cur, conn, filepath='data/song_data', func=process_song_file)
-    process_data(cur, conn, filepath='data/log_data', func=process_log_file)
+    process_data(cur, conn, filepath='data/song_data',
+                 func=process_song_file, bulk_insert=bulk_insert)
+    process_data(cur, conn, filepath='data/log_data',
+                 func=process_log_file, bulk_insert=bulk_insert)
 
     conn.close()
 
 
 if __name__ == "__main__":
-    main()
+    parser = setup_parser()
+    args = parser.parse_args()
+    main(args.bulk_insert)
