@@ -2,10 +2,11 @@
 
 This is a first demo project in the Data Engineer Nanodegree Udacity program. Description of the project is given below.   
 
-A startup called Sparkify wants to analyze the data they've been collecting on songs and user activity on their new music streaming app. The analytics team is particularly interested in understanding what songs users are listening to. Pipeline implemented in this project allows to transofrm JSON logs with user activity on the app and JSON metadata on the songs and load the result to Postgres database.
+A startup called Sparkify wants to analyze the data they've been collecting on songs and user activity on their new music streaming app. The analytics team is particularly interested in understanding what songs users are listening to. Pipeline implemented in this project allows to transofrm JSON logs with user activity on the app and on the songs and load the result to Postgres database.
 
 # Database schema
 
+Database is designed using usual fact-dimensions tables schema. 
 
 
 
@@ -35,12 +36,35 @@ python create_tables.py
 ```
 
 Finally, run the ETL pipeline.
+```
+python etl.py
+```
 
 If you run this stuff with docker-compose you can now go to **localhost:8080** and after login review all your tables via postgres-adminer. Also you can easily manage your data or perform SQL queries using this simple tool.
 
 
-# Console application
+# Testing
 
-This pipeline can be used a console application as well. Currently this functionality is still under development.
+In order to run the test first start postgres with test database
+```
+docker-compose --file=docker-compose.test.yml up
+```
+Then run
+```
+pytest test_etl.py
+```
+Use pytest-cov to see the coverage:
+```
+pytest --cov=etl test_etl.py
+```
+Or for more detailed version of report
+```
+pytest --cov=etl  --cov-report=term-missing test_etl.py
+```
 
+# Next steps
+
+* make ETL a console application with possibility to run the pipeline from the command line
+* add possibility of bulk insert
+* better test coverage
 
