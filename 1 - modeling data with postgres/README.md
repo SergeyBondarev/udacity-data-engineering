@@ -6,7 +6,14 @@ A startup called Sparkify wants to analyze the data they've been collecting on s
 
 # Database schema
 
-Database is designed using usual fact-dimensions tables schema. 
+Database is designed using usual fact-dimensions tables schema also known as a star-schema. There are five tables
+
+* artists (artist_id, name, location, latitude, longitude) represents a dimension table.
+* songplays (songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent) represents a fact table. It describes the fact that particular user has listened a particular song of particular artist during particular period of time.
+* songs (song_id, title, artist_id, year, duration) is a dimension table.
+* time (start_time, hour, day, week, month, year, weekday) is a dimension table.
+* users (user_id, first_name, last_name, gender, level) is a dimension table as well.
+
 
 
 
