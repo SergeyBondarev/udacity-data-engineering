@@ -9,20 +9,23 @@ time_table_drop = "DROP TABLE IF EXISTS time;"
 # CREATE TABLES
 
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays (
-    songplay_id VARCHAR(20),
-    start_time TEXT,
-    user_id VARCHAR(20),
+    songplay_id SERIAL PRIMARY KEY,
+    start_time TEXT NOT NULL,
+    user_id VARCHAR(20) NOT NULL,
     level VARCHAR(20),
     song_id VARCHAR(20),
     artist_id VARCHAR(20),
     session_id VARCHAR(20),
     location TEXT,
-    user_agent TEXT
+    user_agent TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (song_id) REFERENCES songs(song_id),
+    FOREIGN KEY (artist_id) REFERENCES artists(artist_id)
 );
 """)
 
 user_table_create = ("""CREATE TABLE IF NOT EXISTS users (
-    user_id VARCHAR(20),
+    user_id VARCHAR(20) PRIMARY KEY,
     first_name VARCHAR(200),
     last_name VARCHAR(200),
     gender VARCHAR(100),
@@ -31,7 +34,7 @@ user_table_create = ("""CREATE TABLE IF NOT EXISTS users (
 """)
 
 song_table_create = ("""CREATE TABLE IF NOT EXISTS songs (
-    song_id VARCHAR(20),
+    song_id VARCHAR(20) PRIMARY KEY,
     title VARCHAR(200),
     artist_id VARCHAR(20),
     year INT,
@@ -40,7 +43,7 @@ song_table_create = ("""CREATE TABLE IF NOT EXISTS songs (
 """)
 
 artist_table_create = ("""CREATE TABLE IF NOT EXISTS artists (
-    artist_id VARCHAR(20),
+    artist_id VARCHAR(20) PRIMARY KEY,
     name VARCHAR(200),
     location TEXT,
     latitude TEXT,
@@ -49,7 +52,7 @@ artist_table_create = ("""CREATE TABLE IF NOT EXISTS artists (
 """)
 
 time_table_create = ("""CREATE TABLE IF NOT EXISTS time (
-    start_time TEXT,
+    start_time TEXT PRIMARY KEY,
     hour INT,
     day INT,
     week INT,
@@ -62,9 +65,9 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS time (
 # INSERT RECORDS
     
 
-songplay_table_insert = ("""INSERT INTO songplays (songplay_id, start_time, user_id, level, song_id, artist_id, session_id,
+songplay_table_insert = ("""INSERT INTO songplays (start_time, user_id, level, song_id, artist_id, session_id,
 location, user_agent)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
 """)
 
 user_table_insert = ("""INSERT INTO users (user_id, first_name, last_name, gender, level)
@@ -92,5 +95,5 @@ song_select = ("""SELECT songs.song_id, artists.artist_id FROM songs JOIN artist
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries = [user_table_create, song_table_create, artist_table_create, time_table_create, songplay_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
