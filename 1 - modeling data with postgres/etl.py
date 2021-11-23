@@ -51,6 +51,7 @@ def process_log_file(conn, filepath):
     time_data = (t, t.dt.hour, t.dt.day, t.dt.weekofyear, t.dt.month, t.dt.year, t.dt.weekday)
     column_labels = ('start_time', 'hour', 'day', 'week', 'month','year', 'weekday')
     time_df = pd.DataFrame(data=dict(zip(column_labels, time_data)))
+    df['ts'] = pd.to_datetime(df['ts'], unit='ms')
 
     for _, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))

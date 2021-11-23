@@ -10,8 +10,8 @@ time_table_drop = "DROP TABLE IF EXISTS time;"
 
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays (
     songplay_id SERIAL PRIMARY KEY,
-    start_time TEXT NOT NULL,
-    user_id VARCHAR(20) NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    user_id INTEGER NOT NULL,
     level VARCHAR(20),
     song_id VARCHAR(20),
     artist_id VARCHAR(20),
@@ -25,7 +25,7 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays (
 """)
 
 user_table_create = ("""CREATE TABLE IF NOT EXISTS users (
-    user_id VARCHAR(20) PRIMARY KEY,
+    user_id INTEGER PRIMARY KEY,
     first_name VARCHAR(200),
     last_name VARCHAR(200),
     gender VARCHAR(100),
@@ -46,13 +46,13 @@ artist_table_create = ("""CREATE TABLE IF NOT EXISTS artists (
     artist_id VARCHAR(20) PRIMARY KEY,
     name VARCHAR(200),
     location TEXT,
-    latitude TEXT,
-    longitude TEXT
+    latitude FLOAT,
+    longitude FLOAT
 );
 """)
 
 time_table_create = ("""CREATE TABLE IF NOT EXISTS time (
-    start_time TEXT PRIMARY KEY,
+    start_time TIMESTAMP PRIMARY KEY,
     hour INT,
     day INT,
     week INT,
@@ -75,7 +75,7 @@ user_table_insert = ("""INSERT INTO users (user_id, first_name, last_name, gende
 """)
 
 song_table_insert = ("""INSERT INTO songs (song_id, title, artist_id, year, duration)
-    VALUES (%s, %s, %s, %s, %s);
+    VALUES (%s, %s, %s, %s, %s) ON CONFLICT (song_id) DO NOTHING;
 """)
 
 artist_table_insert = ("""INSERT INTO artists (artist_id, name, location, latitude, longitude)
