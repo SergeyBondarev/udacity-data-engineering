@@ -69,6 +69,13 @@ Or for more detailed version of report
 pytest --cov=etl  --cov-report=term-missing test_etl.py
 ```
 
+# Code quality maintenance
+
+To check the code quality run
+```
+pylint etl.py
+```
+
 # Next steps
 
 * make ETL a console application with possibility to run the pipeline from the command line

@@ -1,52 +1,47 @@
+"""This module provides ETL pipeline for sparkifydb using postgres"""
+
+
 import os
 import glob
-import psycopg2
 import logging
+import psycopg2
 import pandas as pd
-from sql_queries import *
+from sql_queries import song_table_insert, artist_table_insert, time_table_insert, user_table_insert, songplay_table_insert, song_select
 
 
 logger = logging.getLogger("etl")
 
 
 def process_song_file(conn, filepath):
-    """Get json file and insert data into song and artist tables
-    param: cur: cursor
+    """
+    Get json file and insert data into song and artist tables
+    param: conn: connection to database
     param: filepath: path to json file with song data
+    return: None
     """
     cur = conn.cursor()
 
     df = pd.read_json(filepath, lines=True)
 
-    song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']].drop_duplicates().values[0]
-    try:
-        cur.execute(song_table_insert, song_data)
-    except psycopg2.errors.UniqueViolation as e:
-        conn.rollback()
-        logger.info(f"Duplicate song_id found in {filepath}")
-    else:
-        conn.commit()
+    song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']].values[0]
+    cur.execute(song_table_insert, song_data)
 
     artist_data = list(
         df[['artist_id',
             'artist_name',
             'artist_location',
             'artist_latitude',
-            'artist_longitude']].drop_duplicates().values[0]
+            'artist_longitude']].values[0]
     )
-    try:
-        cur.execute(artist_table_insert, artist_data)
-    except psycopg2.errors.UniqueViolation:
-        logger.warning(f"Duplicate artist_id found in {filepath}")
-        conn.rollback()
-    else:
-        conn.commit()
+    cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(conn, filepath):
-    """Get log file and insert data into time, user and songplay tables
-    param: cur: cursor
+    """
+    Get log file and insert data into time, user and songplay tables
+    param: conn: connection to database
     param: filepath: path to json file with log data
+    return: None
     """
 
     cur = conn.cursor()
@@ -58,25 +53,12 @@ def process_log_file(conn, filepath):
     time_df = pd.DataFrame(data=dict(zip(column_labels, time_data)))
 
     for _, row in time_df.iterrows():
-        try:
-            cur.execute(time_table_insert, list(row))
-        except psycopg2.errors.UniqueViolation:
-            logger.warning(f"Duplicate time_start {row[0]} found in {filepath}")
-            conn.rollback()
-        else:
-            conn.commit()
+        cur.execute(time_table_insert, list(row))
 
     user_df = df[['userId', 'firstName', 'lastName', 'gender', 'level']].drop_duplicates()
 
     for _, row in user_df.iterrows():
-        try:
-            cur.execute(user_table_insert, row)
-        except psycopg2.errors.UniqueViolation:
-            logger.warning(f"Duplicate user_id {row[0]} found in {filepath}")
-            conn.rollback()
-        else:
-            conn.commit()
-
+        cur.execute(user_table_insert, row)
 
     for _, row in df.iterrows():
         cur.execute(song_select, (row.song, row.artist, row.length))
@@ -93,25 +75,33 @@ def process_log_file(conn, filepath):
 
 
 def process_data(conn, filepath, func):
-    # get all files matching extension from directory
+    """
+    Get all files in filepath and process them using func
+    param: conn: connection to database
+    param: filepath: path to the directory with data (json files)
+    param: func: function to process data
+    return: None
+    """
     all_files = []
-    for root, dirs, files in os.walk(filepath):
+    for root, _, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
         for f in files :
             all_files.append(os.path.abspath(f))
 
     num_files = len(all_files)
-    print('{} files found in {}'.format(num_files, filepath))
+    logger.info('%s files found in %s', num_files, filepath)
 
     for i, datafile in enumerate(all_files, 1):
         func(conn, datafile)
         conn.commit()
-        print('{}/{} files processed.'.format(i, num_files))
+        logger.info('%s/%s files processed.', i, num_files)
 
 
-def setup_logging(level=logging.ERROR):
+def setup_logging(level=logging.INFO):
     """
     Basic logger setup
+    param: level: logging level
+    return: None
     """
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=level)
 
