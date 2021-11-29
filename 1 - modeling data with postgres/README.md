@@ -27,6 +27,12 @@ conda activate my-env
 pip install -r requirements.txt
 ```
 
+**Note**: Ubuntu users might experience issues with **pg_config executable not found** error. In this case installation
+```
+sudo apt install libpq-dev
+```
+can help.
+
 It's better to have docker installed. It would simplify a local start. Otherwise you can try to run postgres locally.
 
 # Instructions on how to run pipeline
