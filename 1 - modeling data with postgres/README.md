@@ -14,8 +14,14 @@ Database is designed using usual fact-dimensions tables schema also known as a s
 * time (start_time, hour, day, week, month, year, weekday) is a dimension table.
 * users (user_id, first_name, last_name, gender, level) is a dimension table as well.
 
+The schema is presented on the picture below
 
+![image info](./schema/schema.png)
 
+You can generate the above image with
+```
+python display_schema.py
+```
 
 # Prerequisites for ETL pipeline
 

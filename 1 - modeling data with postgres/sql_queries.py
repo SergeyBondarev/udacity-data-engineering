@@ -20,7 +20,8 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays (
     user_agent TEXT,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (song_id) REFERENCES songs(song_id),
-    FOREIGN KEY (artist_id) REFERENCES artists(artist_id)
+    FOREIGN KEY (artist_id) REFERENCES artists(artist_id),
+    FOREIGN KEY (start_time) REFERENCES time(start_time)
 );
 """)
 
