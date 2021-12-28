@@ -157,7 +157,7 @@ staging_songs_copy = (f"""
 
 songplay_table_insert = (f'''
     INSERT INTO {SONGPLAY} (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
-    SELECT dateadd(second, ts, '1970-01-01 00:00:00') as start_time,  userId, level, song_id, artist_id, sessionId, location, userAgent
+    SELECT dateadd(second, ts/1000, '1970-01-01 00:00:00') as start_time,  userId, level, song_id, artist_id, sessionId, location, userAgent
     FROM {STAGING_EVENTS}
     JOIN {STAGING_SONGS}
     ON {STAGING_EVENTS}.song = {STAGING_SONGS}.title
