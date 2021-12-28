@@ -55,8 +55,8 @@ staging_songs_table_create = (f'''
         artist_id VARCHAR(20),
         artist_latitude FLOAT,
         artist_longitude FLOAT,
-        artist_location VARCHAR(100),
-        artist_name VARCHAR(100),
+        artist_location VARCHAR(200),
+        artist_name VARCHAR(200),
         song_id VARCHAR(20),
         title VARCHAR(200),
         duration FLOAT,
@@ -131,7 +131,7 @@ staging_events_copy = (f"""
     from {config['S3']['LOG_DATA']}
     iam_role {config['IAM_ROLE']['ARN']}
     region 'us-west-2'
-    FORMAT AS json {config['S3']['LOG_JSONPATH']};
+    json {config['S3']['LOG_JSONPATH']};
 """)
 
 staging_songs_copy = (f"""
@@ -149,18 +149,20 @@ songplay_table_insert = (f'''
     SELECT dateadd(second, ts, '1970-01-01 00:00:00') as start_time,  userId, level, song_id, artist_id, sessionId, location, userAgent
     FROM {STAGING_EVENTS}
     JOIN {STAGING_SONGS}
-    ON {STAGING_EVENTS}.song = {STAGING_SONGS}.title;
+    ON {STAGING_EVENTS}.song = {STAGING_SONGS}.title
+    WHERE userId IS NOT NULL;
 ''')
 
 user_table_insert = (f'''
     INSERT INTO {USER} (user_id, first_name, last_name, gender, level)
     SELECT userId, firstName, lastName, gender, level
-    FROM {STAGING_EVENTS};
+    FROM {STAGING_EVENTS}
+    WHERE userId IS NOT NULL;
 ''')
 
 song_table_insert = (f'''
     INSERT INTO {SONG} (song_id, title, artist_id, year, duration)
-    SELECT songId, title, artist_id, EXTRACT(YEAR FROM ts), duration
+    SELECT song_id, title, artist_id, EXTRACT(YEAR FROM (dateadd(second, ts, '1970-01-01 00:00:00'))), duration
     FROM {STAGING_EVENTS}
     JOIN {STAGING_SONGS}
     ON {STAGING_EVENTS}.song = {STAGING_SONGS}.title;
@@ -182,5 +184,5 @@ time_table_insert = (f'''
 
 create_table_queries = [staging_events_table_create, staging_songs_table_create, user_table_create, song_table_create, artist_table_create, time_table_create, songplay_table_create]
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
-copy_table_queries = [staging_events_copy]#, staging_songs_copy]
+copy_table_queries = [staging_events_copy, staging_songs_copy]
 insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
