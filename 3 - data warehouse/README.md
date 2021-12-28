@@ -54,7 +54,7 @@ This command performs the following steps:
 
 ## AWS cluster setup automation
 
-TODO
+TODO: add scripts that will create IAM role and Redshift cluster for you.
 
 ## Analytical queries
 
@@ -69,7 +69,7 @@ $ python analytics.py most_active_users
 
 ## Performance benchmarks
 
-TODO
+TODO: Check the performance depending on the number of cluster nodes.
 
 ## Code quality maintenence
 
