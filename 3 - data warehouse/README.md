@@ -23,11 +23,11 @@ SONG_DATA='s3://udacity-dend/song-data'
 ## Database schema
 
 Staging tables schema:
-![Staging tables](/images/staging_tables.png)
+![Staging tables](images/staging_tables.png)
 
 Final tables schema (ready for analytical queries):
 
-![Final tables](/images/final_tables.png)
+![Final tables](images/final_tables.png)
 
 It's easy to see that the final tables form a snowflake structure with fact table songplay being in the middle. All other tables are dimension tables. This schema are easy to understand and perform analytical queries on.
 
@@ -58,9 +58,16 @@ TODO
 
 ## Analytical queries
 
-TODO
+See `analytics.py` module for analytical queries.
 
-## Performance benchmark
+Possible  queries:
+```
+$ python analytics.py most_popular_songs
+$ python analytics.py most_popular_artists
+$ python analytics.py most_active_users
+```
+
+## Performance benchmarks
 
 TODO
 
