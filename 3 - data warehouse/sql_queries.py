@@ -1,3 +1,14 @@
+"""
+This module contains the SQL queries used to
+1. create/drop tables
+2. copy data from S3 to staging tables
+3. insert data into dimensional and fact tables
+
+This module does not contain analytical queries.
+Check out analytics.py for those.
+"""
+
+
 import configparser
 
 

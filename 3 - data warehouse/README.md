@@ -17,7 +17,7 @@ ARN='arn:aws:iam::XXXXXXXXXXXX:role/your-role-name'
 [S3]
 LOG_DATA='s3://udacity-dend/log-data'
 LOG_JSONPATH='s3://udacity-dend/log_json_path.json'
-SONG_DATA='s3://udacity-dend/song-data/A/A'
+SONG_DATA='s3://udacity-dend/song-data'
 ```
 
 ## Database schema
@@ -50,4 +50,23 @@ This command performs the following steps:
 
 1. Extracts the data from the source json files.
 2. Stages the data in the Amazon Redshift database staging tables.
-3. Loads the data from the staging tables into the final tables ready for analytical queries.  
+3. Loads the data from the staging tables into the final tables ready for analytical queries.
+
+## AWS cluster setup automation
+
+TODO
+
+## Analytical queries
+
+TODO
+
+## Performance benchmark
+
+TODO
+
+## Code quality maintenence
+
+Use the following command to check the code quality of the module
+```
+$ pylint etl.py
+```
