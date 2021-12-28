@@ -157,7 +157,7 @@ staging_songs_copy = (f"""
 
 songplay_table_insert = (f'''
     INSERT INTO {SONGPLAY} (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
-    SELECT dateadd(second, ts/1000, '1970-01-01 00:00:00') as start_time,  userId, level, song_id, artist_id, sessionId, location, userAgent
+    SELECT DISTINCT dateadd(second, ts/1000, '1970-01-01 00:00:00') as start_time,  userId, level, song_id, artist_id, sessionId, location, userAgent
     FROM {STAGING_EVENTS}
     JOIN {STAGING_SONGS}
     ON {STAGING_EVENTS}.song = {STAGING_SONGS}.title
@@ -166,14 +166,14 @@ songplay_table_insert = (f'''
 
 user_table_insert = (f'''
     INSERT INTO {USER} (user_id, first_name, last_name, gender, level)
-    SELECT userId, firstName, lastName, gender, level
+    SELECT DISTINCT userId, firstName, lastName, gender, level
     FROM {STAGING_EVENTS}
     WHERE userId IS NOT NULL;
 ''')
 
 song_table_insert = (f'''
     INSERT INTO {SONG} (song_id, title, artist_id, year, duration)
-    SELECT song_id, title, artist_id, EXTRACT(YEAR FROM (dateadd(second, ts, '1970-01-01 00:00:00'))), duration
+    SELECT DISTINCT song_id, title, artist_id, EXTRACT(YEAR FROM (dateadd(second, ts, '1970-01-01 00:00:00'))), duration
     FROM {STAGING_EVENTS}
     JOIN {STAGING_SONGS}
     ON {STAGING_EVENTS}.song = {STAGING_SONGS}.title;
@@ -181,7 +181,7 @@ song_table_insert = (f'''
 
 artist_table_insert = (f'''
     INSERT INTO {ARTIST} (artist_id, name, location, latitude, longitude)
-    SELECT artist_id, artist_name, artist_location, artist_latitude, artist_longitude
+    SELECT DISTINCT artist_id, artist_name, artist_location, artist_latitude, artist_longitude
     FROM {STAGING_SONGS};
 ''')
 
