@@ -59,4 +59,4 @@ def create_cluster(auto_terminate=True):
 if __name__ == "__main__":
     setup_logger()
     logger.info("Creating cluster...")
-    # create_cluster(auto_terminate=True)
+    create_cluster(auto_terminate=False)

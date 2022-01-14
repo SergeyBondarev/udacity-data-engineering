@@ -50,8 +50,8 @@ def process_song_data(spark, input_data, output_data):
     df = spark.read.json(song_data, schema=song_data_schema)
 
     
-    songs_table = df.select("song_id", "title", "artist_id", "year", "duration")
-    print(songs_table.show(5))
+    songs_table = df.select("song_id", "title", "artist_id", "year", "duration").dropDuplicates()
+    songs_table.write.parquet(f"{output_data}/songs_table", mode="overwrite")
     
     # write songs table to parquet files partitioned by year and artist
     # songs_table
@@ -107,7 +107,7 @@ def process_log_data(spark, input_data, output_data):
 def main():
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
-    output_data = ""
+    output_data = "s3://sparkify-parquet/"
     
     process_song_data(spark, input_data, output_data)    
     #process_log_data(spark, input_data, output_data)
