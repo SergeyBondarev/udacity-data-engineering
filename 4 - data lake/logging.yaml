@@ -37,7 +37,7 @@ root:
 
 
 loggers:
-    create_cluster:
+    etl:
         level: INFO
         handlers: [info_file_handler, error_file_handler]
         propogate: no
