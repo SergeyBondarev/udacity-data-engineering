@@ -7,22 +7,16 @@ import subprocess
 import configparser
 import logging
 
+from logger import setup_logger
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger('create_cluster')
 
 
 def read_config():
     config = configparser.ConfigParser()
     config.read('dl.cfg')
     return config
-
-
-def setup_logger():
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
-    logger.addHandler(handler)
 
 
 def create_cluster(auto_terminate=True):
@@ -65,4 +59,4 @@ def create_cluster(auto_terminate=True):
 if __name__ == "__main__":
     setup_logger()
     logger.info("Creating cluster...")
-    create_cluster(auto_terminate=True)
+    # create_cluster(auto_terminate=True)

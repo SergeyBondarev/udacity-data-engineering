@@ -1,0 +1,48 @@
+version: 1
+disable_existing_loggers: false
+
+
+formatters:
+    standard:
+        format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    error:
+        format: "%(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s"
+
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: standard
+
+    info_file_handler:
+        class: logging.handlers.RotatingFileHandler
+        level: INFO
+        formatter: standard
+        filename: info.log
+        encoding: utf8
+
+    error_file_handler:
+        class: logging.handlers.RotatingFileHandler
+        level: ERROR
+        formatter: error
+        filename: error.log
+        encoding: utf8
+
+
+root:
+    level: INFO
+    handlers: [console]
+    propogate: yes
+
+
+loggers:
+    create_cluster:
+        level: INFO
+        handlers: [info_file_handler, error_file_handler]
+        propogate: no
+
+    pass:
+        level: DEBUG
+        handlers: [info_file_handler, error_file_handler]
+        propogate: yes
